@@ -1,8 +1,10 @@
 import { DeviceRequestModel, DeviceResponseModel } from '@/types/vreedaApi';
+import { Box, Card, CardContent, FormControlLabel, Slider, Switch, Typography } from '@mui/material';
 import { useState } from 'react';
 
 export default function DeviceControl({ id, model }: { id: string, model: DeviceResponseModel }) {
   const [isOn, setIsOn] = useState(model.states?.on?.value);
+  const [sliderValue, setSliderValue] = useState(model.states?.v?.value || 0);
 
   async function updateDevice(deviceId: string, request: DeviceRequestModel) {
     try {
@@ -38,9 +40,62 @@ export default function DeviceControl({ id, model }: { id: string, model: Device
     }
   };
 
+  const handleSliderChange = async (event: Event, value: number | number[]) => {
+    const newValue = Array.isArray(value) ? value[0] : value;
+    setSliderValue(newValue);
+
+    try {
+      await updateDevice(id, { states: { v: newValue } });
+    } catch (error) {
+      console.log('Failed to update slider value:', error);
+    }
+  };
+
   return (
-    <li>
-        {model.tags?.customDeviceName || 'Unnamed Device'}: {model.connected?.value ? <button onClick={toggleDevice}>{isOn ? 'Turn Off' : 'Turn On'}</button> : "(Offline)"}
-    </li>
+    <Card variant="outlined" sx={{ mb: 2, p: 2, backgroundColor: '#2A1D24' }}>
+      <CardContent>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Typography variant="h6">
+            {model.tags?.customDeviceName || 'Unnamed Device'}
+          </Typography>
+          {/* Switch positioned at top-right corner */}
+          <FormControlLabel
+            control={
+              <Switch
+                checked={isOn || false}
+                onChange={toggleDevice}
+                color="primary"
+                disabled={!model.connected?.value}
+              />
+            }
+            label=""
+          />
+        </Box>
+        <Typography variant="body2" color="text.secondary">
+          Device ID: {id}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Status: {model.connected?.value ? 'Online' : 'Offline'}
+        </Typography>
+
+        {/* Slider for 'v' state, with conditional rendering */}
+        {typeof sliderValue === 'number' && (
+          <Box mt={2}>
+            <Typography variant="body2" color="text.secondary" gutterBottom>
+              Brightness
+            </Typography>
+            <Slider
+              value={sliderValue}
+              onChange={handleSliderChange}
+              min={0}
+              max={1} // Adjust max value based on expected range for 'v'
+              step={0.1}
+              color="primary"
+              aria-labelledby="intensity-slider"
+            />
+          </Box>
+        )}
+      </CardContent>
+    </Card>
   );
 }

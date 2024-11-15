@@ -1,7 +1,7 @@
 import NextAuth, { AuthOptions } from "next-auth"
 import { OAuthConfig, OAuthUserConfig } from "next-auth/providers/oauth"
 
-interface AzureB2CProfile extends Record<string, any> {
+interface AzureB2CProfile extends Record<string, number | string> {
     exp: number
     nbf: number
     ver: string

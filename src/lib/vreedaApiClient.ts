@@ -14,7 +14,7 @@ export async function apiFetch<REQ, RES>(path: string, token: string, options?: 
 
     const url = process.env.VREEDA_API_BASEURL + path;
 
-    console.log("fetching " + url);
+    //console.log("fetching " + url);
 
     const response = await fetch(url, {
         method: options?.method || 'GET',
@@ -31,8 +31,7 @@ export async function apiFetch<REQ, RES>(path: string, token: string, options?: 
     }
 
     const result = await response.json();
-    console.log("received " + JSON.stringify(result));
-
+    //console.log("received " + JSON.stringify(result));
     return result;
 }
 

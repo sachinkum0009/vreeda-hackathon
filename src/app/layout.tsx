@@ -8,10 +8,12 @@ import { NextAuthProvider } from "@/app/providers";
 export default function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
       <body>
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <ThemeProvider theme={theme}>
-            {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
             <CssBaseline />
             <NextAuthProvider>{props.children}</NextAuthProvider>
           </ThemeProvider>

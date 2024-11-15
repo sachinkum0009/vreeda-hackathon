@@ -5,36 +5,42 @@ import Box from '@mui/material/Box';
 import { SigninButton as SigninButton } from '@/components/LoginButton';
 import DeviceList from '@/components/DeviceList'; // Importieren Sie die DeviceList-Komponente
 import { useSession } from 'next-auth/react';
+import { Typography } from '@mui/material';
 
 export default function Home() {
   const { data: session, status } = useSession(); // Session-Status abrufen
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="md">
       <Box
         sx={{
           my: 4,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
-        <h1>This is a VREEDA-Sample-Service</h1>
+        <Typography variant="h4" gutterBottom>
+          VREEDA Sample Service
+        </Typography>
         {status === 'loading' ? (
-          <p>Loading...</p> // Wenn der Login-Status noch geprüft wird
+          <Typography variant="body1">Loading...</Typography>
         ) : session ? (
-          // Geräteliste anzeigen, wenn der Benutzer eingeloggt ist
           <>
-            <p>Welcome, {session.user?.name || 'User'}!</p>
-            <DeviceList /> 
-            <br/>
-            <SigninButton />
+            <Typography variant="body1">
+              Welcome, {session.user?.name || 'User'}!
+            </Typography>
+            <DeviceList />
+            <Box mt={2}>
+              <SigninButton />
+            </Box>
           </>
         ) : (
-          // Login-Button anzeigen, wenn der Benutzer nicht eingeloggt ist
           <>
-            <p>Please sign in to view your devices.</p>
+            <Typography variant="body1" gutterBottom>
+              Please sign in to view your devices.
+            </Typography>
             <SigninButton />
           </>
         )}

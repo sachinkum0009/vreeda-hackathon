@@ -2,9 +2,10 @@ import { getServerSession } from 'next-auth/next';
 import { NextResponse } from 'next/server';
 import { listDevices } from '@/lib/vreedaApiClient'; // Replace with your actual utility import
 import { authOptions } from '../../auth/[...nextauth]/route';
+import { Session } from 'next-auth';
   
 export async function GET() {
-  const session = await getServerSession(authOptions);
+  const session: Session | null = await getServerSession(authOptions);
 
   if (!session || !session.accessToken) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
