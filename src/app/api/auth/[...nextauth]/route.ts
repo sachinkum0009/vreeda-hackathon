@@ -1,3 +1,5 @@
+import connectToDatabase from "@/lib/mongodb"
+import UserContext from "@/models/UserContext"
 import NextAuth, { AuthOptions } from "next-auth"
 import { OAuthConfig, OAuthUserConfig } from "next-auth/providers/oauth"
 
@@ -62,19 +64,53 @@ export const authOptions: AuthOptions = {
         }),
     ],
     callbacks: {
-        async jwt({ token, account }) {
-          // Add the access token to the token object if available
+        async jwt({ token, account, profile }) {
           if (account) {
-            token.accessToken = account.access_token; // Save the access token
+            token.id = profile.id
+            token.accessToken = account.access_token;
           }
           return token;
         },
         async session({ session, token }) {
-          // Attach the access token to the session object
+          //console.log("session callback: ", session, token)
+
           session.accessToken = token.accessToken;
+          session.user.id = token.sub
+    
           return session;
         },
       },
+    events: {
+      async signIn({user, account, profile}) {
+        //Connect to MongoDB
+        await connectToDatabase();
+    
+        // Create or update the UserContext
+        if (user && user?.id) {
+          try {
+            const updatedContext = await UserContext.findOneAndUpdate(
+              { userId: user.id }, // Match user by email
+              {
+                userId: user.id,
+                apiAccessTokens: {
+                  accessToken: account.access_token || "",
+                  refreshToken: account.refresh_token || "",
+                  accessTokenExpiration: account.expires_at
+                    ? new Date(account.expires_at * 1000)
+                    : undefined,
+                  refreshTokenExpiration: undefined, // Set if available
+                },
+                updatedAt: new Date(),
+              },
+              { upsert: true, new: true }
+            );
+            console.log("UserContext created/updated:", updatedContext);
+          } catch (error) {
+            console.error("Error updating UserContext:", error);
+          }
+        }
+      }
+    },
     secret: process.env.NEXTAUTH_SECRET,
 };
 

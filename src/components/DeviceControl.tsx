@@ -1,8 +1,8 @@
 import { DeviceRequestModel, DeviceResponseModel } from '@/types/vreedaApi';
-import { Box, Card, CardContent, FormControlLabel, Slider, Switch, Typography } from '@mui/material';
+import { Box, Card, CardContent, Checkbox, FormControlLabel, Slider, Switch, Typography } from '@mui/material';
 import { useState } from 'react';
 
-export default function DeviceControl({ id, model }: { id: string, model: DeviceResponseModel }) {
+export default function DeviceControl({ id, model, selected, onSelectionChange}: { id: string, model: DeviceResponseModel, selected: boolean, onSelectionChange: (id: string, selected: boolean) => void }) {
   const [isOn, setIsOn] = useState(model.states?.on?.value);
   const [sliderValue, setSliderValue] = useState(model.states?.v?.value || 0);
 
@@ -51,10 +51,27 @@ export default function DeviceControl({ id, model }: { id: string, model: Device
     }
   };
 
+  const handleSelectionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const isChecked = event.target.checked;
+    onSelectionChange(id, isChecked);
+  };
+
   return (
     <Card variant="outlined" sx={{ mb: 2, p: 2, backgroundColor: '#2A1D24' }}>
       <CardContent>
         <Box display="flex" justifyContent="space-between" alignItems="center">
+          {/* Selection Checkbox */}
+          <FormControlLabel
+              control={
+                <Checkbox
+                  checked={selected}
+                  onChange={handleSelectionChange}
+                  color="primary"
+                />
+              }
+              label=""
+              sx={{ mr: 1 }}
+            />
           <Typography variant="h6">
             {model.tags?.customDeviceName || 'Unnamed Device'}
           </Typography>

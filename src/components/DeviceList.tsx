@@ -7,6 +7,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 
 export default function DeviceList() {
   const [devices, setDevices] = useState<DevicesResponse>({});
+  const [selectedDevices, setSelectedDevices] = useState<string[]>([]); 
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [reloading, setReloading] = useState<boolean>(false);
@@ -26,8 +27,20 @@ export default function DeviceList() {
     }
   };
 
+  const fetchSelectedDevices = async () => {
+    try {
+      const response = await fetch(`/api/user/configuration`);
+      if (!response.ok) throw new Error("Failed to fetch configuration");
+      const data = await response.json();
+      setSelectedDevices(data.devices || []);
+    } catch (error) {
+      console.error("Error fetching selected devices:", error);
+    }
+  };
+
   useEffect(() => {
     fetchDevices();
+    fetchSelectedDevices();
   }, []);
 
   // Handler for the reload button
@@ -35,6 +48,39 @@ export default function DeviceList() {
     setReloading(true);
     fetchDevices();
   };
+
+  const handleSelectionChange = async (deviceId: string, isSelected: boolean) => {
+    const updatedDevices = isSelected
+    ? [...selectedDevices, deviceId]
+    : selectedDevices.filter((id) => id !== deviceId);
+
+    setSelectedDevices(updatedDevices);
+
+    // Save changes to the backend
+    try {
+      const response = await fetch("/api/user/configuration", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          configuration: { devices: updatedDevices },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update configuration");
+      }
+
+      console.log("Configuration updated successfully");
+    } catch (error) {
+      console.error("Error updating configuration:", error);
+    }
+  };
+
+  useEffect(() => {
+    console.log("selected: " + selectedDevices);
+  }, [selectedDevices]);
 
   return (
     <Box sx={{ width: '100%', mt: 4 }}>
@@ -55,7 +101,7 @@ export default function DeviceList() {
         <List>
           {devices &&
             Object.entries(devices).map(([id, device]) => (
-              <DeviceControl model={device} id={id} key={id} />
+              <DeviceControl model={device} id={id} key={id} selected={selectedDevices.includes(id)} onSelectionChange={handleSelectionChange}/>
             ))}
         </List>
       )}

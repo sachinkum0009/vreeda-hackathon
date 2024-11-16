@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --experimental-https",
+    "dev": "yarn run start-docker && next dev --experimental-https",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "start-docker": "docker compose up -d",
+    "stop-docker": "docker compose down"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
@@ -16,6 +18,8 @@
     "@mui/material-nextjs": "^6.1.6",
     "jsonwebtoken": "^9.0.2",
     "jwks-rsa": "^3.1.0",
+    "mongodb": "^6.10.0",
+    "mongoose": "^8.8.1",
     "next": "15.0.3",
     "next-auth": "^4.24.10",
     "react": "19.0.0-rc-66855b96-20241106",
