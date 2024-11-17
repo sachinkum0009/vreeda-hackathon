@@ -888,7 +888,7 @@ try {
             </Typography>
 
             <TextField
-              label="Interval"
+              label="Interval (mins)"
               type="number"
               value={sliderValue4}
               onChange={(e) => setSliderValue4(Number(e.target.value))}
@@ -900,7 +900,7 @@ try {
             />
 
             <TextField
-              label="Break"
+              label="Break (mins)"
               type="number"
               value={sliderValue5}
               onChange={(e) => setSliderValue5(Number(e.target.value))}
@@ -912,7 +912,7 @@ try {
             />
 
             <TextField
-              label="Times"
+              label="Times (how many times)"
               type="number"
               value={sliderValue6}
               onChange={(e) => setSliderValue6(Number(e.target.value))}
