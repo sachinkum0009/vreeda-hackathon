@@ -63,7 +63,7 @@ export default function Home() {
         }}
       >
         <Typography variant="h4" gutterBottom>
-          VREEDA Sample Service
+          VREEDA Hackathon
         </Typography>
         {status === 'loading' ? (
           <Typography variant="body1">Loading...</Typography>
@@ -89,7 +89,8 @@ export default function Home() {
             </Box>
 
             <Typography variant="body1">
-              Welcome, {session.user?.name || "User"}!
+              TEAM SAPS 
+               {/* {session.user?.name || "User"}! */}
             </Typography>
 
             {/* Display Grant Status */}

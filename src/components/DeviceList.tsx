@@ -100,7 +100,7 @@ export default function DeviceList() {
       ) : (
         <List>
           {devices &&
-            Object.entries(devices).map(([id, device]) => (
+            Object.entries(devices).slice(0, 1).map(([id, device]) => (
               <DeviceControl model={device} id={id} key={id} selected={selectedDevices.includes(id)} onSelectionChange={handleSelectionChange}/>
             ))}
         </List>
